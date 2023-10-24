@@ -1,33 +1,48 @@
-//
-// Created by rainoftime on 17-4-17.
-//
-
-#include <ctime>
-#include <iostream>
-#include <sys/time.h>
-
 #include "timer.h"
 
-calu_time::calu_time() {
-
+void timer::suspend() {
+	if (!suspended) {
+		time(&suspend_start_time);
+		suspended = true;
+	}
 }
 
-void calu_time::timer_begin() {
-	gettimeofday(&t_start_, NULL);
-	//std::cout << "b: " << t_start_.tv_sec << std::endl;
+void timer::resume() {
+	if (suspended) {
+		time_t curr_time;
+		time(&curr_time);
+		double time_elapsed = difftime(curr_time, suspend_start_time);
+		suspend_time += time_elapsed;
+		suspended = false;
+	}
 }
 
-void calu_time::timer_end() {
-	gettimeofday(&t_end_, NULL);
-	//std::cout << "e: " << t_end_.tv_sec << std::endl;
+bool timer::is_timeout() {
+	if (steps_counter == 0) {
+		steps_counter = steps;
+
+		double time_elapsed;
+
+		if (suspended) {
+			time_elapsed = difftime(suspend_start_time, start_time);
+		} else {
+			time_t curr_time;
+			time(&curr_time);
+			time_elapsed = difftime(curr_time, start_time);
+		}
+
+		if (time_elapsed > (duration + suspend_time)) {
+			return true;
+		}
+	} else {
+		steps_counter--;
+	}
+
+	return false;
 }
 
-double calu_time::timer_span() {
-	timersub(&t_end_, &t_start_, &t_result_);
-	result_ = t_result_.tv_sec + (1.0 * t_result_.tv_usec) / 1000000;
-	return result_;
-}
-
-calu_time::~calu_time() {
-
+void timer::check() {
+	if (is_timeout()) {
+		task_after_timeout();
+	}
 }

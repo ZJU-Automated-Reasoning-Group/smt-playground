@@ -5,7 +5,6 @@
 #include <cstring>
 #include <sys/stat.h>
 
-#include "utils/file_system.h"
 
 int g_mode = 0;
 int g_timeout = 15;

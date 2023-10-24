@@ -47,10 +47,8 @@ endif()
 set(SOURCE_FILES
         utils/timer.cpp
         utils/base64.cpp
-        utils/popen.cpp
-
+        utils/string2int.cpp
         
-        ml/knn.cpp
         opt/opt_util.cpp
         opt/opt.cpp
         

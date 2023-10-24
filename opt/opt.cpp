@@ -1,4 +1,3 @@
-
 #include <map>
 #include <cstdint>
 #include "opt.h"
